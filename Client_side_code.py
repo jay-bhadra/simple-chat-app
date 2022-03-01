@@ -4,7 +4,7 @@ from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import tkinter
 
-
+# This funtion is responsible for receiving the messages 
 def receive():
     """Handles receiving of messages."""
     while True:
@@ -24,7 +24,7 @@ def send(event=None):  # event is passed by binders.
         client_socket.close()
         top.quit()
 
-
+# This funtion is responsible for closing the chat window
 def on_closing(event=None):
     """This function is to be called when the window is closed."""
     my_msg.set("exit")
@@ -52,8 +52,8 @@ send_button.pack()
 
 top.protocol("WM_DELETE_WINDOW", on_closing)
 
-#----Now comes the sockets part----
-HOST = '127.0.0.1'
+# This is the sockets part that connects the server and the client through sockets
+HOST = '127.0.0.1' # local host
 PORT = 33000
 if not PORT:
     PORT = 33000
