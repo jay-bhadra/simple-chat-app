@@ -20,6 +20,7 @@ SERVER.bind(ADDR)
 # This funtion is continuously running and accepting the new clients
 def accept_incoming_connections():
     """Sets up handling for incoming clients."""
+    # This part connects the server and the client together by assigning the HOST IP and PORT to the server through sockets
     while True:
         client, client_address = SERVER.accept()
         print("%s:%s has connected." % client_address)
@@ -37,13 +38,14 @@ def handle_client(client):  # Takes client socket as argument.
     welcome = 'Welcome %s! If you ever want to quit, type exit.' % name
     client.send(bytes(welcome, "utf8"))
     msg = "%s has joined the chat!" % name
-    broadcast(bytes(msg, "utf8"))  # broadcasts the message to all the other clients
+    broadcast(bytes(msg, "utf8")) #initiates the broadcast function and sends the message "<name> has joined the chat"
     clients[client] = name
 
     while True:
         msg = client.recv(BUFSIZ)
-        if msg != bytes("exit", "utf8"):
-            broadcast(msg, name+": ")
+        if msg != bytes("exit", "utf8"): #if the message received is not equal to "exit", then broadcast the below
+            broadcast(msg, name+": ") #initiates the broadcast function to send the message to all the other clients
+        #if the client sends the message "exit", then the following code is executed which closes the client and removes it from the dictionary
         else:
             client.send(bytes("exit", "utf8"))
             client.close()
@@ -55,10 +57,10 @@ def handle_client(client):  # Takes client socket as argument.
 def broadcast(msg, prefix=""):  # prefix is for name identification.
     """Broadcasts a message to all the clients."""
 
-# This part connects the server and the client together by assigning the HOST IP and PORT to the server through sockets
     for sock in clients:
         sock.send(bytes(prefix, "utf8")+msg)
 
+#This part is where the server side of code is first initiated, calling the "accept_incomeing_connections" function
 if __name__ == "__main__":
     SERVER.listen(5)
     print("Waiting for connection...")
