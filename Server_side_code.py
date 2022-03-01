@@ -9,7 +9,7 @@ from threading import Thread
 clients = {}
 addresses = {}
 
-HOST = '127.0.0.1'
+HOST = '127.0.0.1' # It is the local host (local system IP), so the chat works locally, not on the Internet; 
 PORT = 33000
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
@@ -17,7 +17,7 @@ ADDR = (HOST, PORT)
 SERVER = socket(AF_INET, SOCK_STREAM)
 SERVER.bind(ADDR)
 
-
+# This funtion is continuously running and accepting the new clients
 def accept_incoming_connections():
     """Sets up handling for incoming clients."""
     while True:
@@ -27,7 +27,7 @@ def accept_incoming_connections():
         addresses[client] = client_address
         Thread(target=handle_client, args=(client,)).start()
 
-
+# This funtion takes the client socket as an argument and enables the client to join the chat
 def handle_client(client):  # Takes client socket as argument.
     """Handles a single client connection."""
 
@@ -37,7 +37,7 @@ def handle_client(client):  # Takes client socket as argument.
     welcome = 'Welcome %s! If you ever want to quit, type exit.' % name
     client.send(bytes(welcome, "utf8"))
     msg = "%s has joined the chat!" % name
-    broadcast(bytes(msg, "utf8"))
+    broadcast(bytes(msg, "utf8"))  # broadcasts the message to all the other clients
     clients[client] = name
 
     while True:
@@ -51,10 +51,11 @@ def handle_client(client):  # Takes client socket as argument.
             broadcast(bytes("%s has left the chat." % name, "utf8"))
             break
 
-
+# This funtion is responsible for broadcasting the message to all the clients 
 def broadcast(msg, prefix=""):  # prefix is for name identification.
     """Broadcasts a message to all the clients."""
 
+# This part connects the server and the client together by assigning the HOST IP and PORT to the server through sockets
     for sock in clients:
         sock.send(bytes(prefix, "utf8")+msg)
 
