@@ -1,7 +1,21 @@
 #!/usr/bin/env python3
+
+#TCP used over UDP as for this purpose we need an established connection whereas UDP sockets are helpful for actions without any active connections, for example, emails
 """Server for multithreaded (asynchronous) chat application."""
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
+
+#Setting up constants for later use       
+clients = {}
+addresses = {}
+
+HOST = '127.0.0.1'
+PORT = 33000
+BUFSIZ = 1024
+ADDR = (HOST, PORT)
+
+SERVER = socket(AF_INET, SOCK_STREAM)
+SERVER.bind(ADDR)
 
 
 def accept_incoming_connections():
@@ -17,7 +31,9 @@ def accept_incoming_connections():
 def handle_client(client):  # Takes client socket as argument.
     """Handles a single client connection."""
 
+    #saving the name of the client
     name = client.recv(BUFSIZ).decode("utf8")
+    #sending a welcome message to the client
     welcome = 'Welcome %s! If you ever want to quit, type exit.' % name
     client.send(bytes(welcome, "utf8"))
     msg = "%s has joined the chat!" % name
@@ -41,18 +57,6 @@ def broadcast(msg, prefix=""):  # prefix is for name identification.
 
     for sock in clients:
         sock.send(bytes(prefix, "utf8")+msg)
-
-        
-clients = {}
-addresses = {}
-
-HOST = '127.0.0.1'
-PORT = 33000
-BUFSIZ = 1024
-ADDR = (HOST, PORT)
-
-SERVER = socket(AF_INET, SOCK_STREAM)
-SERVER.bind(ADDR)
 
 if __name__ == "__main__":
     SERVER.listen(5)
